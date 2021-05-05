@@ -6,7 +6,6 @@
 import logging
 import gspread
 import keyboard as kb
-import webbrowser
 
 import aiogram.utils.markdown as md
 from aiogram import Bot, Dispatcher, types
@@ -18,13 +17,11 @@ from aiogram.utils import executor
 from oauth2client.service_account import ServiceAccountCredentials
 from config import TOKEN
 
-
 # Global variable for TOKEN etc...
 SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 # Need file creds.json from google API
 CREDS = ServiceAccountCredentials.from_json_keyfile_name('creds.json', SCOPE)
-
 
 # Open google sheets
 client = gspread.authorize(CREDS)
@@ -45,7 +42,8 @@ class Form(StatesGroup):
 
 @dp.message_handler(text='Записаться на тренировку')
 async def sign_workout(message: types.Message):
-    await message.answer('https://widget.bookform.ru/2822/view/58189DA6855C11EA8420E412A7274106/', reply_markup=kb.button_markup)
+    await message.answer('https://widget.bookform.ru/2822/view/58189DA6855C11EA8420E412A7274106/',
+                         reply_markup=kb.button_markup)
 
 
 @dp.message_handler(text='Забронировать проживание')
@@ -89,6 +87,7 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
 async def get_to_instagram(message: types.Message):
     await message.reply('https://vk.com/wakedacha', reply_markup=kb.button_markup)
 
+
 @dp.message_handler(text='Группа Вконтакте')
 async def get_to_public_vk(message: types.Message):
     await message.answer('https://www.instagram.com/wakedacha', reply_markup=kb.button_markup)
@@ -98,9 +97,11 @@ async def get_to_public_vk(message: types.Message):
 async def call_to_admin(message: types.Message):
     await message.answer('Номер администратора: \n +79214464498', reply_markup=kb.button_markup)
 
+
 async def shutdown(dispatcher: Dispatcher):
     await dispatcher.storage.close()
     await dispatcher.storage.wait_closed()
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, on_shutdown=shutdown)
