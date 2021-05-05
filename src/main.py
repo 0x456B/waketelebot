@@ -1,5 +1,4 @@
 # !TODO Как открывать сразу браузер
-# !TODO После проверка абона закрывать прием номера пока не вызовешь функцию снова
 #
 #
 
@@ -59,44 +58,47 @@ async def cmd_start(message: types.Message):
                         "🏄 Записаться на тренировку\n" +
                         "🏘 Забронировать проживание\n" +
                         "❓ Узнать остаток твоих сетов на абоне\n" +
-                        "👍 И другие полезные функции", reply_markup=kb.button_markup)
+                        "👍 И другие полезные функции",
+
+                         reply_markup=kb.button_markup)
 
 
 @dp.message_handler(text='❓ Узнать остаток сетов на абонементе')
 async def cmd_start(message: types.Message):
     await Form.number_subscriptions.set()
-    await message.reply("Введите номер абонемента:", reply_markup=kb.button_markup)
+    await message.answer("Введите номер абонемента:")
 
 
 @dp.message_handler(state=Form.number_subscriptions)
 async def get_number_subscription(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['number_subscriptions'] = message.text
-
     data_table = sheet.get_all_records()
 
-    for subscription in data_table:
-        if int(subscription['Номер абона']) == int(data['number_subscriptions']):
-            await bot.send_message(
-                message.chat.id,
-                md.text(
-                    md.text('По абонементу №', md.bold(subscription['Номер абона']),
-                            ' осталось ', md.bold(subscription['Количество сэтов']), 'сетов',
-                            # md.bold(subscription['Color'])
-                            )),
-                # reply_markup=markup,
-                parse_mode=ParseMode.MARKDOWN,
-            )
+    if message.text == "Отмена":
+        await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
+    else:
+        for subscription in data_table:
+            if int(subscription['Номер абона']) == int(data['number_subscriptions']):
+                await bot.send_message(
+                    message.chat.id,
+                    md.text(
+                        md.text('По абонементу №', md.bold(subscription['Номер абона']),
+                                ' осталось ', md.bold(subscription['Количество сэтов']), 'сетов',
+                                )),
+                    # reply_markup=markup,
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+        await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
 
 
 @dp.message_handler(text='📸 Instagram')
 async def get_to_instagram(message: types.Message):
-    await message.reply('https://vk.com/wakedacha', reply_markup=kb.button_markup)
-
+    await message.answer('https://www.instagram.com/wakedacha', reply_markup=kb.button_markup)
 
 @dp.message_handler(text='🐶 Группа Вконтакте')
 async def get_to_public_vk(message: types.Message):
-    await message.answer('https://www.instagram.com/wakedacha', reply_markup=kb.button_markup)
+    await message.answer('https://vk.com/wakedacha', reply_markup=kb.button_markup)
 
 
 @dp.message_handler(text='📞 Позвонить')
