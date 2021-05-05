@@ -14,23 +14,22 @@ from config import TOKEN
 # Global variable for TOKEN etc...
 SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+# Need file creds.json from google API
 CREDS = ServiceAccountCredentials.from_json_keyfile_name('creds.json', SCOPE)
 
-client = gspread.authorize(CREDS)
+
 # Open google sheets
+client = gspread.authorize(CREDS)
 sheet = client.open('abon').sheet1
 
-logging.basicConfig(level=logging.INFO)
 API_TOKEN = TOKEN
-
 bot = Bot(token=API_TOKEN)
 
-# Используем простое хранилище
+# Use storage and logging
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
+logging.basicConfig(level=logging.INFO)
 
-
-# Состояния
 class Form(StatesGroup):
     number_subscriptions = State()
 
