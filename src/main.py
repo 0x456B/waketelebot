@@ -6,7 +6,6 @@ import logging
 import gspread
 import keyboard as kb
 
-
 import aiogram.utils.markdown as md
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -54,11 +53,11 @@ async def accommodation(message: types.Message):
 @dp.message_handler(commands='start')
 async def cmd_start(message: types.Message):
     await message.answer("Привет\n\nЯ бот Вейк Дачи\n" +
-                        "Через меня ты можешь:\n\n" +
-                        "🏄 Записаться на тренировку\n" +
-                        "🏘 Забронировать проживание\n" +
-                        "❓ Узнать остаток твоих сетов на абоне\n" +
-                        "👍 И другие полезные функции",
+                         "Через меня ты можешь:\n\n" +
+                         "🏄 Записаться на тренировку\n" +
+                         "🏘 Забронировать проживание\n" +
+                         "❓ Узнать остаток твоих сетов на абоне\n" +
+                         "👍 И другие полезные функции",
 
                          reply_markup=kb.button_markup)
 
@@ -81,12 +80,9 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
         for subscription in data_table:
             if int(subscription['Номер абона']) == int(data['number_subscriptions']):
                 await bot.send_message(
-                    message.chat.id,
-                    md.text(
-                        md.text('По абонементу №', md.bold(subscription['Номер абона']),
-                                ' осталось ', md.bold(subscription['Количество сэтов']), 'сетов',
-                                )),
-                    # reply_markup=markup,
+                    message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
+                                                     ' осталось ', md.bold(subscription['Количество сэтов']),
+                                                     'сетов', )),
                     parse_mode=ParseMode.MARKDOWN,
                 )
         await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
@@ -95,6 +91,7 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
 @dp.message_handler(text='📸 Instagram')
 async def get_to_instagram(message: types.Message):
     await message.answer('https://www.instagram.com/wakedacha', reply_markup=kb.button_markup)
+
 
 @dp.message_handler(text='🐶 Группа Вконтакте')
 async def get_to_public_vk(message: types.Message):
