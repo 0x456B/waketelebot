@@ -82,9 +82,7 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
                 await bot.send_message(
                     message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
                                                      ' осталось ', md.bold(subscription['Количество сэтов']),
-                                                     'сетов', )),
-                    parse_mode=ParseMode.MARKDOWN,
-                )
+                                                     'сетов', )), parse_mode=ParseMode.MARKDOWN,)
         await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
 
 
