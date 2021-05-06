@@ -1,0 +1,15 @@
+[Unit]
+Description=Telegranbot for wake dacha
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/local/bin/waketelebot
+ExecStart=/usr/bin/python3 /usr/local/bin/waketelebot/src/main.py
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
