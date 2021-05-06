@@ -8,7 +8,8 @@ Type=simple
 User=root
 WorkingDirectory=/usr/local/bin/waketelebot
 ExecStart=/usr/bin/python3 /usr/local/bin/waketelebot/src/main.py
-RestartSec=10
+ExecReload=/usr/bin/python3 /usr/local/bin/waketelebot/src/main.py
+RestartSec=5
 Restart=always
 
 [Install]
