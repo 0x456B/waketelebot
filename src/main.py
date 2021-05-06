@@ -62,6 +62,11 @@ async def cmd_start(message: types.Message):
                          reply_markup=kb.button_markup)
 
 
+async def cmd_cancel(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer("Действие отменено", reply_markup=types.ReplyKeyboardRemove())
+
+
 @dp.message_handler(text='❓ Узнать остаток сетов на абонементе')
 async def cmd_start(message: types.Message):
     await Form.number_subscriptions.set()
@@ -74,16 +79,17 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
         data['number_subscriptions'] = message.text
     data_table = sheet.get_all_records()
 
-    if message.text == "Отмена":
-        await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
-    else:
-        for subscription in data_table:
-            if int(subscription['Номер абона']) == int(data['number_subscriptions']):
-                await bot.send_message(
-                    message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
-                                                     ' осталось ', md.bold(subscription['Количество сэтов']),
-                                                     'сетов', )), parse_mode=ParseMode.MARKDOWN,)
-        await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
+    for subscription in data_table:
+        if str("Отмена") == str(data['number_subscriptions']):
+            await state.finish()
+            await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
+            return
+        elif int(subscription['Номер абона']) == int(data['number_subscriptions']):
+            await bot.send_message(
+                message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
+                                                 ' осталось ', md.bold(subscription['Количество сэтов']),
+                                                 'сетов', )), parse_mode=ParseMode.MARKDOWN, )
+            await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
 
 
 @dp.message_handler(text='📸 Instagram')
