@@ -118,6 +118,7 @@ async def call_to_admin(message: types.Message):
 async def other_text(message: types.Message):
     await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
 
+
 async def shutdown(dispatcher: Dispatcher):
     await dispatcher.storage.close()
     await dispatcher.storage.wait_closed()
