@@ -66,7 +66,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 @dp.message_handler(text=kb.button_balance_on_subscription.text)
 async def cmd_start(message: types.Message):
     await Form.number_subscriptions.set()
-    await message.answer("Введите номер абонемента:")
+    await message.answer("Введите номер абонемента:", reply_markup=kb.markup_start_cancel)
 
 
 @dp.message_handler(state=Form.number_subscriptions)
@@ -75,25 +75,28 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
         data['number_subscriptions'] = message.text
     data_table = sheet.get_all_records()
 
+    if str("Отмена") == str(data['number_subscriptions']):
+        await state.finish()
+        await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
+        return
+    elif not data['number_subscriptions'].isdigit():
+        await message.answer("Введите только цифры своего абонемента.\nПовторите ввод:",
+                             reply_markup=kb.markup_start_cancel)
+        return
+    elif int(data['number_subscriptions']) < 1 or int(data['number_subscriptions']) > 1000:
+        await message.answer("Нет абонемента с таким номером.\nПовторите ввод:",
+                             reply_markup=kb.markup_start_cancel)
+        return
+
     for subscription in data_table:
-        if str("Отмена") == str(data['number_subscriptions']):
-            await state.finish()
-            await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
-            return
-        elif not data['number_subscriptions'].isdigit():
-            await message.answer("Введите только цифры своего абонемента.\nПовторите ввод:",
-                                 reply_markup=kb.markup_start_cancel)
-            return
-        elif int(data['number_subscriptions']) < 1 or int(data['number_subscriptions']) > 1000:
-            await message.answer("Нет абонемента с таким номером.\nПовторите ввод:",
-                                 reply_markup=kb.markup_start_cancel)
-            return
-        elif int(subscription['Номер абона']) == int(data['number_subscriptions']):
+
+        if int(subscription['Номер абона']) == int(data['number_subscriptions']):
             await bot.send_message(
                 message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
                                                  ' осталось ', md.bold(subscription['Количество сэтов']),
                                                  'сетов', )), parse_mode=ParseMode.MARKDOWN, )
-            await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
+            await state.finish()
+            await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
 
 
 @dp.message_handler(text=kb.button_instagram.text)
@@ -110,6 +113,10 @@ async def get_to_public_vk(message: types.Message):
 async def call_to_admin(message: types.Message):
     await message.answer('Номер администратора: \n +79214464498', reply_markup=kb.button_markup)
 
+
+@dp.message_handler()
+async def other_text(message: types.Message):
+    await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
 
 async def shutdown(dispatcher: Dispatcher):
     await dispatcher.storage.close()
