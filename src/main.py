@@ -1,7 +1,3 @@
-# !TODO Как открывать сразу браузер
-#
-#
-
 import logging
 import gspread
 import keyboard as kb
@@ -39,13 +35,13 @@ class Form(StatesGroup):
     number_subscriptions = State()
 
 
-@dp.message_handler(text='🏄 Записаться на тренировку')
+@dp.message_handler(text=kb.button_sign_workout.text)
 async def sign_workout(message: types.Message):
     await message.answer('https://widget.bookform.ru/2822/view/58189DA6855C11EA8420E412A7274106/',
                          reply_markup=kb.button_markup)
 
 
-@dp.message_handler(text='🏘 Забронировать проживание')
+@dp.message_handler(text=kb.button_accommodation.text)
 async def accommodation(message: types.Message):
     await message.answer('https://widget.bookform.ru/30366', reply_markup=kb.button_markup)
 
@@ -67,7 +63,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     await message.answer("Действие отменено", reply_markup=types.ReplyKeyboardRemove())
 
 
-@dp.message_handler(text='❓ Узнать остаток сетов на абонементе')
+@dp.message_handler(text=kb.button_balance_on_subscription.text)
 async def cmd_start(message: types.Message):
     await Form.number_subscriptions.set()
     await message.answer("Введите номер абонемента:")
@@ -100,17 +96,17 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
             await message.answer("\n\nПовторите ввод или нажмите кнопку отмена", reply_markup=kb.markup_start_cancel)
 
 
-@dp.message_handler(text='📸 Instagram')
+@dp.message_handler(text=kb.button_instagram.text)
 async def get_to_instagram(message: types.Message):
     await message.answer('https://www.instagram.com/wakedacha', reply_markup=kb.button_markup)
 
 
-@dp.message_handler(text='🐶 Группа Вконтакте')
+@dp.message_handler(text=kb.button_public_vk.text)
 async def get_to_public_vk(message: types.Message):
     await message.answer('https://vk.com/wakedacha', reply_markup=kb.button_markup)
 
 
-@dp.message_handler(text='📞 Позвонить')
+@dp.message_handler(text=kb.button_call)
 async def call_to_admin(message: types.Message):
     await message.answer('Номер администратора: \n +79214464498', reply_markup=kb.button_markup)
 
