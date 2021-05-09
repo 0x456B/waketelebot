@@ -112,7 +112,7 @@ async def get_to_public_vk(message: types.Message):
     await message.answer('https://vk.com/wakedacha', reply_markup=kb.button_markup)
 
 
-@dp.message_handler(text=kb.button_call)
+@dp.message_handler(text=kb.button_call.text)
 async def call_to_admin(message: types.Message):
     await message.answer('Номер администратора: \n +79214464498', reply_markup=kb.button_markup)
 
