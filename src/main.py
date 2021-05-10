@@ -92,14 +92,17 @@ async def get_number_subscription(message: types.Message, state: FSMContext):
         return
 
     for subscription in data_table:
-
         if int(subscription['Номер абона']) == int(data['number_subscriptions']):
-            await bot.send_message(
-                message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
-                                                 'осталось', md.bold(subscription['Количество сэтов']),
-                                                 'сетов', )), parse_mode=ParseMode.MARKDOWN, )
-            await state.finish()
-            await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
+            if not subscription['Количество сэтов']:
+                await message.answer("Нет абонемента с таким номером.\nПовторите ввод:",
+                                     reply_markup=kb.markup_start_cancel)
+            else:
+                await bot.send_message(
+                    message.chat.id, md.text(md.text('По абонементу №', md.bold(subscription['Номер абона']),
+                                                     'осталось', md.bold(subscription['Количество сэтов']),
+                                                     'сетов', )), parse_mode=ParseMode.MARKDOWN, )
+                await state.finish()
+                await message.answer("Чем еще могу помочь?", reply_markup=kb.button_markup)
 
 
 @dp.message_handler(text=kb.button_instagram.text)
