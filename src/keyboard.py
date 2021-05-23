@@ -2,8 +2,6 @@ from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 
-#inline_button_vk = InlineKeyboardButton('Открыть векашечку', url='https://vk.com', callback_data='button_open_vk')
-#inline_kb_open_vk = InlineKeyboardMarkup().add(inline_button_vk)
 
 button_sign_workout = KeyboardButton('🏄 Записаться на тренировку')
 button_accommodation = KeyboardButton('🏘 Забронировать проживание')
